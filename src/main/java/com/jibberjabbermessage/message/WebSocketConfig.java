@@ -16,19 +16,21 @@ import java.util.List;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-  
+
   @Override
   public void configureMessageBroker(MessageBrokerRegistry config) {
     config.enableSimpleBroker("/user");
     config.setApplicationDestinationPrefixes("/app");
     config.setUserDestinationPrefix("/user");
   }
-  
+
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+    registry.addEndpoint("/ws")
+            .setAllowedOriginPatterns("http://localhost:3000")
+            .withSockJS();
   }
-  
+
   @Override
   public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
     DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
