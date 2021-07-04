@@ -13,7 +13,7 @@ public class Chat {
   @GeneratedValue
   private Long id;
   private Long senderId, recipientId;
-  @OneToMany(mappedBy = "chat", fetch = FetchType.EAGER, orphanRemoval = true)
+  @OneToMany(mappedBy = "chat", fetch = FetchType.EAGER)
   private List<Message> messages = new ArrayList<>();
   
   public void addMessage(Message message) {

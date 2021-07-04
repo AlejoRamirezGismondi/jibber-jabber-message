@@ -29,12 +29,12 @@ public class ChatService {
   public void addMessage(Message message) {
     final Optional<Chat> optional = chatRepository.findBySenderIdAndRecipientId(message.getSenderId(), message.getRecipientId());
     final Chat chat;
-    if (optional.isEmpty()) chat = createNewChat(message);
-    else {
+    if (optional.isPresent()) {
       chat = optional.get();
       chat.addMessage(message);
+      message.setChat(chat);
+      chatRepository.save(chat);
     }
-    chatRepository.save(chat);
   }
   
   public Chat findById(Long id) {
@@ -52,5 +52,14 @@ public class ChatService {
   
   public void save(Chat chat) {
     chatRepository.save(chat);
+  }
+
+  public void createIfNotExists(Message message) {
+    final Optional<Chat> optional = chatRepository.findBySenderIdAndRecipientId(message.getSenderId(), message.getRecipientId());
+    final Chat chat;
+    if (optional.isEmpty()) {
+      chat = createNewChat(message);
+      chatRepository.save(chat);
+    }
   }
 }

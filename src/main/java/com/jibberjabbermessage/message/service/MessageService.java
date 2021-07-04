@@ -3,10 +3,12 @@ package com.jibberjabbermessage.message.service;
 import com.jibberjabbermessage.message.model.Chat;
 import com.jibberjabbermessage.message.model.Message;
 import com.jibberjabbermessage.message.model.MessageStatus;
+import com.jibberjabbermessage.message.model.dto.MessageDTO;
 import com.jibberjabbermessage.message.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,10 @@ public class MessageService {
   @Autowired private ChatService chatService;
   
   public Message save(Message message) {
+    final Optional<Chat> optional = chatService.findBySenderIdAndRecipientId(message.getSenderId(), message.getRecipientId());
     message.setStatus(MessageStatus.RECEIVED);
+    message.setTimestamp(LocalDate.now());
+    message.setChat(optional.get());
     return messageRepository.save(message);
   }
   
@@ -49,5 +54,14 @@ public class MessageService {
     chat.setMessages(updated);
     chatService.save(chat);
     return messages;
+  }
+
+  public Message toMessage(MessageDTO dto) {
+    Message message = new Message();
+    message.setSenderId(dto.getSenderId());
+    message.setRecipientId(dto.getRecipientId());
+    message.setTimestamp(LocalDate.now());
+    message.setContent(dto.getContent());
+    return message;
   }
 }
