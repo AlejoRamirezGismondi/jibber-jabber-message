@@ -13,7 +13,8 @@ import java.util.Optional;
 @Service
 public class ChatService {
   
-  @Autowired private ChatRepository chatRepository;
+  @Autowired
+  private ChatRepository chatRepository;
   
   public Long getChatId(Long senderId, Long recipientId) {
     final Optional<Chat> optional = chatRepository.findBySenderIdAndRecipientId(senderId, recipientId);
@@ -47,13 +48,13 @@ public class ChatService {
     final Chat chat = new Chat();
     chat.setSenderId(message.getSenderId());
     chat.setRecipientId(message.getRecipientId());
-   return chat;
+    return chat;
   }
   
   public void save(Chat chat) {
     chatRepository.save(chat);
   }
-
+  
   public void createIfNotExists(Message message) {
     final Optional<Chat> optional = chatRepository.findBySenderIdAndRecipientId(message.getSenderId(), message.getRecipientId());
     final Chat chat;
