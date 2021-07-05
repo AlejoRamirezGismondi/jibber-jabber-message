@@ -18,7 +18,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.Optional;
 
 @Controller
@@ -66,7 +69,13 @@ public class ChatController {
   @GetMapping("/messages/{senderId}/{recipientId}")
   public @ResponseBody
   List<Message> findChatMessages(@PathVariable Long senderId, @PathVariable Long recipientId) {
-    return messageService.findChatMessages(senderId, recipientId);
+    final Stream<Message> sorted = messageService.findChatMessages(senderId, recipientId).stream().sorted(new Comparator<Message>() {
+      @Override
+      public int compare(Message m1, Message m2) {
+        return m1.getTimestamp().compareTo(m2.getTimestamp());
+      }
+    });
+    return sorted.collect(Collectors.toList());
   }
 
   @GetMapping("/messages/{chatId}")
