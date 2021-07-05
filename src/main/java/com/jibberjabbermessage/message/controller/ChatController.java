@@ -1,7 +1,9 @@
 package com.jibberjabbermessage.message.controller;
 
+import com.jibberjabbermessage.message.model.Chat;
 import com.jibberjabbermessage.message.model.ChatNotification;
 import com.jibberjabbermessage.message.model.Message;
+import com.jibberjabbermessage.message.model.dto.ChatDTO;
 import com.jibberjabbermessage.message.model.dto.MessageDTO;
 import com.jibberjabbermessage.message.service.ChatService;
 import com.jibberjabbermessage.message.service.MessageService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
@@ -32,7 +35,7 @@ public class ChatController {
 
   @MessageMapping("/chat")
   @SendTo("/queue/messages")
-  public Message processMessage(@Payload MessageDTO dto) {
+  public ChatDTO processMessage(@Payload MessageDTO dto) {
     Message message = messageService.toMessage(dto);
     String token = dto.getToken();
     final Long userId = userService.getUserId(token);
@@ -40,7 +43,12 @@ public class ChatController {
     chatService.createIfNotExists(message);
     Message saved = messageService.save(message);
     chatService.addMessage(saved);
-    return saved;
+    Optional<Chat> wholeChat = chatService.findBySenderIdAndRecipientId(message.getSenderId(), message.getRecipientId());
+    List<Message> messageList = wholeChat.get().getMessages();
+    ChatDTO chat = new ChatDTO();
+    chat.setMessages(messageList);
+    chat.setContactId(message.getRecipientId());
+    return chat;
   }
 
   @GetMapping("/messages/{senderId}/{recipientId}/count")
