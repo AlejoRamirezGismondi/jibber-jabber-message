@@ -25,7 +25,7 @@ services:
     - messagedata:/var/lib/postgresql/data
 
   api:
-    container_name: api-user
+    container_name: api-message
     build:
       dockerfile: Dockerfile
       context: .
