@@ -1,0 +1,39 @@
+version: "3"
+
+# Run 'docker compose up' to start all containers
+
+# Default Network
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  messagedata:
+
+services:
+  db:
+    container_name: docker-database-message
+    image: postgres:12
+    restart: always
+    env_file:
+      - .env.production
+    ports:
+      - 5434:5432
+    networks:
+      - app-network
+    volumes:
+    - messagedata:/var/lib/postgresql/data
+
+  api:
+    container_name: api-message
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 8082:8080
+    networks:
+      - app-network
+    env_file:
+      - .env.production
+    depends_on:
+      - db
