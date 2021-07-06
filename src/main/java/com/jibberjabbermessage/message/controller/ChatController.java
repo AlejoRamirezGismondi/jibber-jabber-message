@@ -46,11 +46,9 @@ public class ChatController {
     chatService.createIfNotExists(message);
     Message saved = messageService.save(message);
     chatService.addMessage(saved);
-    Optional<Chat> wholeChat = chatService.findBySenderIdAndRecipientId(message.getSenderId(), message.getRecipientId());
-    List<Message> messageList = wholeChat.get().getMessages();
     ChatDTO chat = new ChatDTO();
-    chat.setMessages(messageList);
-    chat.setContactId(message.getRecipientId());
+    chat.setContactId(dto.getSenderId());
+    chat.setMessage(saved);
     return chat;
   }
 
