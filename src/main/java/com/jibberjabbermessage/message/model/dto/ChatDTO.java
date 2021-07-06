@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class ChatDTO {
   private Long contactId;
-  private List<Message> messages;
+  private Message message;
 }
