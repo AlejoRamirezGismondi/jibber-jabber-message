@@ -26,8 +26,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws")
-            .setAllowedOriginPatterns("http://localhost:3000")
-            .withSockJS();
+            .setAllowedOriginPatterns("http://localhost:3000", "https://jibberjabber-prod.hopto.org", "https://jibberjabber-dev.hopto.org").withSockJS()
+            .setClientLibraryUrl( "https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js" );
   }
 
   @Override
