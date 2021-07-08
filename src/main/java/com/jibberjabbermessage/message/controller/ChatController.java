@@ -1,7 +1,5 @@
 package com.jibberjabbermessage.message.controller;
 
-import com.jibberjabbermessage.message.model.Chat;
-import com.jibberjabbermessage.message.model.ChatNotification;
 import com.jibberjabbermessage.message.model.Message;
 import com.jibberjabbermessage.message.model.dto.ChatDTO;
 import com.jibberjabbermessage.message.model.dto.MessageDTO;
@@ -22,7 +20,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.Optional;
 
 @Controller
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
@@ -54,8 +51,9 @@ public class ChatController {
 
   @GetMapping("/messages/{senderId}/{recipientId}/count")
   public @ResponseBody
-  Long countNewMessage(@PathVariable Long senderId, @PathVariable Long recipientId) {
-    return messageService.countNewMessages(senderId, recipientId);
+  int countNewMessage(@PathVariable Long senderId, @PathVariable Long recipientId, @RequestHeader("Authorization") String token) {
+    final Long myId = userService.getUserId(token);
+    return messageService.countNewMessages(senderId, recipientId, myId);
   }
 
   @GetMapping("/messages/{chatId}/count")
@@ -66,8 +64,9 @@ public class ChatController {
 
   @GetMapping("/messages/{senderId}/{recipientId}")
   public @ResponseBody
-  List<Message> findChatMessages(@PathVariable Long senderId, @PathVariable Long recipientId) {
-    final Stream<Message> sorted = messageService.findChatMessages(senderId, recipientId).stream().sorted(new Comparator<Message>() {
+  List<Message> findChatMessages(@PathVariable Long senderId, @PathVariable Long recipientId, @RequestHeader("Authorization") String token) {
+    final Long myId = userService.getUserId(token);
+    final Stream<Message> sorted = messageService.findChatMessages(senderId, recipientId, myId).stream().sorted(new Comparator<Message>() {
       @Override
       public int compare(Message m1, Message m2) {
         return m1.getTimestamp().compareTo(m2.getTimestamp());
@@ -77,8 +76,9 @@ public class ChatController {
   }
 
   @GetMapping("/messages/{chatId}")
-  public List<Message> findChatMessages(@PathVariable Long chatId) {
-    return messageService.findChatMessages(chatId);
+  public List<Message> findChatMessages(@PathVariable Long chatId, @RequestHeader("Authorization") String token) {
+    Long myId = userService.getUserId(token);
+    return messageService.findChatMessages(chatId, myId);
   }
 
 }

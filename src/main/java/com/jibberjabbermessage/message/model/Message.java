@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +22,7 @@ public class Message {
   private Long senderId, recipientId;
   private String content;
   private LocalDate timestamp;
-  private MessageStatus status;
+  private boolean received = false;
   @ManyToOne
   @JsonIgnore
   private Chat chat;
