@@ -27,7 +27,7 @@ public class UserService {
   
   public String getUserName(String token, Long senderId) {
     HttpEntity http = tokenToHttp(token);
-    final ResponseEntity<String> exchange = restTemplate.exchange(url + "/firstName", HttpMethod.GET, http, String.class);
+    final ResponseEntity<String> exchange = restTemplate.exchange(url + "/userName", HttpMethod.GET, http, String.class);
     return exchange.getBody();
   }
   
